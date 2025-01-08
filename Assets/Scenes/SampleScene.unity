@@ -935,7 +935,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d85e459db54de83498dd9bdf6eb2f52c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  golfStickRotationMultiplier: 0.00001
+  golfStickRotationMultiplier: 0.0001
   hitStrength: 500
   speedThreshhold: 0.2
   swingAcceleration: 20
