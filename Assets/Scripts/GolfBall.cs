@@ -5,36 +5,48 @@ using static UnityEngine.GraphicsBuffer;
 
 public class GolfBall : MonoBehaviour
 {
-    Vector2 worldMousePos;
-    bool playerAiming;
+    private bool playerAiming = false;
+    private bool swinging = false;
+    Quaternion golfStickPreSwingRotation;
+    [SerializeField] float golfStickRotationMultiplier = 1f;
     // how powerful the hit from the player is
     [SerializeField] float hitStrength = 1f;
     // how slow ball must be going before player could hit it
     [SerializeField] float speedThreshhold = 1f;
-    // should be front, middle, back
-    [SerializeField] GameObject[] arrowSegments;
-    Vector2[] arrowSizes;
-    [SerializeField] float arrowWidth = 1f;
-    Rigidbody2D rb;
+    [SerializeField] float swingAcceleration = 0.4f;
+    private float swingCurrentSpeed = 0f;
+    private float swingCurrentRot = 0f;
+    // golf stick visual
+    [SerializeField] Transform golfStick;
+    // makes rotating the stick easy
+    private Transform golfStickPivot;
+    private Rigidbody2D rb;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
-        arrowSizes = new Vector2[arrowSegments.Length];
-        for (int i = 0; i < arrowSegments.Length; i++)
-        {
-            arrowSizes[i] = arrowSegments[i].GetComponent<SpriteRenderer>().bounds.size;
-        }
+        golfStickPivot = golfStick.GetChild(0);
     }
     private void Update()
     {
-        if (playerAiming && worldMousePos != null)
+        if (playerAiming)
         {
-            Vector2 ballToMouse = worldMousePos - (Vector2)transform.position;
-            Vector2 frontPosition = (Vector2)transform.position + (ballToMouse.normalized * arrowSizes[0].y/2);
-            arrowSegments[0].transform.position = frontPosition;
-            Vector3 direction = transform.position - arrowSegments[0].transform.position;
-            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-            arrowSegments[0].transform.rotation = Quaternion.Euler(new Vector3(0, 0, angle - 90));
+            Vector2 mouseToBall = (Vector2)transform.position - getWorldMousePosition();
+            golfStick.position = transform.position;
+            float angle = Mathf.Atan2(mouseToBall.y, mouseToBall.x) * Mathf.Rad2Deg;
+            golfStick.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 180));
+            golfStickPivot.localRotation = Quaternion.Euler(new Vector3(0, 0, 179 * (1 - Mathf.Pow(2.71828f, -calculateShotVector().magnitude * golfStickRotationMultiplier))));
+        } else if (swinging)
+        {
+            golfStickPivot.localRotation = Quaternion.Slerp(golfStickPreSwingRotation, Quaternion.identity, swingCurrentRot);
+            swingCurrentSpeed += swingAcceleration * Time.deltaTime;
+            swingCurrentRot += swingCurrentSpeed * Time.deltaTime;
+            if (swingCurrentRot > 1f)
+            {
+                swinging = false;
+                swingCurrentRot = 0f;
+                swingCurrentSpeed = 0f;
+                rb.AddForce(calculateShotVector());
+            }
         }
     }
     private void OnMouseDown()
@@ -44,29 +56,36 @@ public class GolfBall : MonoBehaviour
             playerAiming = true;
         }
     }
-    private void OnMouseDrag()
-    {
-        if (playerAiming)
-        {
-            worldMousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        }
-    }
     private void OnMouseUp()
     {
-        if (playerAiming)
+        if (rb.velocity.magnitude < speedThreshhold)
         {
-            Vector2 hitForce = (Vector2)transform.position - worldMousePos;
-            hitForce *= hitStrength;
-            rb.AddForce(hitForce);
+            golfStickPreSwingRotation = golfStickPivot.localRotation;
+            swinging = true;
+            playerAiming = false;
         }
-        playerAiming = false;
+    }
+
+    private Vector2 calculateShotVector(Vector2 fromPos)
+    {
+        Vector2 shotVec = (Vector2)transform.position - getWorldMousePosition();
+        shotVec *= hitStrength;
+        return shotVec;
+    }
+    private Vector2 calculateShotVector()
+    {
+        return calculateShotVector(getWorldMousePosition());
+    }
+    private Vector2 getWorldMousePosition()
+    {
+        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
     }
     private void OnDrawGizmos()
     {
         if (playerAiming)
         {
             Gizmos.color = Color.red;
-            Gizmos.DrawLine(worldMousePos, transform.position);
+            Gizmos.DrawLine(getWorldMousePosition(), transform.position);
         }
     }
 }
