@@ -5,10 +5,10 @@ using static UnityEngine.GraphicsBuffer;
 
 public class GolfBall : MonoBehaviour
 {
-    private bool playerAiming = false;
     private bool swinging = false;
-    Quaternion golfStickPreSwingRotation;
+    private Quaternion golfStickPreSwingRotation;
     [SerializeField] float golfStickRotationMultiplier = 1f;
+    [SerializeField] int player = 0; // 0 or 1
     // how powerful the hit from the player is
     [SerializeField] float hitStrength = 1f;
     // how slow ball must be going before player could hit it
@@ -21,71 +21,75 @@ public class GolfBall : MonoBehaviour
     // makes rotating the stick easy
     private Transform golfStickPivot;
     private Rigidbody2D rb;
+    // used for kb controls
+    public float golfStickRotation = 0f;
+    private float keyboardChargeTime = 0f;
+    // https://www.desmos.com/calculator/k0qjfnotew
+    // a is speed, b is initial
+    // f(x) is how shot power grows over time, g(x) is the total power with respect to time (antiderivative)
+    [SerializeField] float keyboardChargeSpeed = 5f;
+    [SerializeField] float keyboardChargeInitial = 4f;
+    [SerializeField] float keyboardGolfStickRotationSpeed = 1f;
+    Vector3 initialScale;
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
         golfStickPivot = golfStick.GetChild(0);
+        initialScale = golfStick.transform.localScale;
     }
     private void Update()
     {
-        if (playerAiming)
+        golfStick.position = transform.position;
+        golfStick.rotation = Quaternion.Euler(new Vector3(0, 0,  Mathf.Cos(golfStickRotation * Mathf.Deg2Rad) < 0 ? 180 : 0));
+        Vector3 newScale = initialScale;
+        newScale.y *= Mathf.Cos(golfStickRotation * Mathf.Deg2Rad) < 0 ? -1 : 1;
+        golfStick.localScale = newScale;
+        golfStickRotation +=
+            (player == 0 ? Input.GetAxis("P1Horizontal") :
+            player == 1 ? Input.GetAxis("P2Horizontal") : 0) * Time.deltaTime * keyboardGolfStickRotationSpeed;
+        string axis =
+            player == 0 ? "P1Vertical" :
+            player == 1 ? "P2Vertical" : "";
+        if (Input.GetAxisRaw(axis) > 0.1) {
+            keyboardChargeTime += Time.deltaTime;
+            golfStickPivot.localRotation = Quaternion.Euler(new Vector3(0, 0, 179 * (1 - Mathf.Pow(2.71828f, CalculateHitPower(keyboardChargeTime) * golfStickRotationMultiplier))));
+        }
+        else if (keyboardChargeTime > 0.001)
         {
-            Vector2 mouseToBall = (Vector2)transform.position - getWorldMousePosition();
-            golfStick.position = transform.position;
-            float angle = Mathf.Atan2(mouseToBall.y, mouseToBall.x) * Mathf.Rad2Deg;
-            golfStick.rotation = Quaternion.Euler(new Vector3(0, 0, angle + 180));
-            golfStickPivot.localRotation = Quaternion.Euler(new Vector3(0, 0, 179 * (1 - Mathf.Pow(2.71828f, -calculateShotVector().magnitude * golfStickRotationMultiplier))));
-        } else if (swinging)
+            swinging = true;
+            golfStickPreSwingRotation = golfStickPivot.localRotation;
+            keyboardChargeTime = 0;
+        }
+        if (swinging)
         {
             golfStickPivot.localRotation = Quaternion.Slerp(golfStickPreSwingRotation, Quaternion.identity, swingCurrentRot);
             swingCurrentSpeed += swingAcceleration * Time.deltaTime;
             swingCurrentRot += swingCurrentSpeed * Time.deltaTime;
-            if (swingCurrentRot > 1f)
+            if (swingCurrentRot > 1)
             {
                 swinging = false;
-                swingCurrentRot = 0f;
-                swingCurrentSpeed = 0f;
-                rb.AddForce(calculateShotVector());
+                swingCurrentRot = 0;
+                swingCurrentSpeed = 0;
+                ShootBall(
+                    CalculateHitPower(keyboardChargeTime) * hitStrength,
+                    new Vector2(Mathf.Cos(golfStickRotation * Mathf.Deg2Rad), Mathf.Sin(golfStickRotation * Mathf.Deg2Rad)));
             }
         }
     }
-    private void OnMouseDown()
+    private void ShootBall(float power, Vector2 direction)
     {
-        if (rb.velocity.magnitude < speedThreshhold)
-        {
-            playerAiming = true;
-        }
+        rb.AddForce(direction * power);
     }
-    private void OnMouseUp()
+    private float CalculateHitPower(float time)
     {
-        if (rb.velocity.magnitude < speedThreshhold)
-        {
-            golfStickPreSwingRotation = golfStickPivot.localRotation;
-            swinging = true;
-            playerAiming = false;
-        }
-    }
-
-    private Vector2 calculateShotVector(Vector2 fromPos)
-    {
-        Vector2 shotVec = (Vector2)transform.position - getWorldMousePosition();
-        shotVec *= hitStrength;
-        return shotVec;
-    }
-    private Vector2 calculateShotVector()
-    {
-        return calculateShotVector(getWorldMousePosition());
-    }
-    private Vector2 getWorldMousePosition()
-    {
-        return Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        return -keyboardChargeSpeed * 
+            ((time - keyboardChargeInitial) * Mathf.Atan(time - keyboardChargeInitial) 
+            - 0.5f * Mathf.Log(1 + Mathf.Pow(time + keyboardChargeInitial, 2)) 
+            + (keyboardChargeSpeed * Mathf.PI * time));
     }
     private void OnDrawGizmos()
     {
-        if (playerAiming)
-        {
-            Gizmos.color = Color.red;
-            Gizmos.DrawLine(getWorldMousePosition(), transform.position);
-        }
+        Gizmos.color = Color.red;
+        Gizmos.DrawLine(transform.position, new Vector2(-Mathf.Cos(golfStickRotation * Mathf.Deg2Rad), Mathf.Sin(golfStickRotation * Mathf.Deg2Rad)) * 100);
     }
 }

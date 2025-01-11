@@ -922,7 +922,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 1
+  m_Radius: 2.68
 --- !u!114 &1855782957
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -936,10 +936,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   golfStickRotationMultiplier: 0.0001
-  hitStrength: 500
+  player: 0
+  hitStrength: 20
   speedThreshhold: 0.2
   swingAcceleration: 20
   golfStick: {fileID: 1388078690}
+  golfStickRotation: 0
+  keyboardChargeSpeed: 20
+  keyboardChargeInitial: 10
+  keyboardGolfStickRotationSpeed: 90
 --- !u!212 &1855782958
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -981,12 +986,12 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 7cc66364c5570dc4280e8de7e28e5473, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Sprite: {fileID: 21300000, guid: feecaf76d40ba9a499bd67d5a36452be, type: 3}
+  m_Color: {r: 0.44392887, g: 0.3150943, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
-  m_Size: {x: 0.16, y: 0.16}
+  m_Size: {x: 5.3, y: 5.32}
   m_AdaptiveModeThreshold: 0.5
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
@@ -1002,7 +1007,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.8335, y: 1.0042, z: 0}
-  m_LocalScale: {x: 0.27, y: 0.27, z: 0.27}
+  m_LocalScale: {x: 0.10390141, y: 0.10390141, z: 0.10390141}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -1022,7 +1027,7 @@ Rigidbody2D:
   m_Mass: 4
   m_LinearDrag: 1
   m_AngularDrag: 0.5
-  m_GravityScale: 0
+  m_GravityScale: 1
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
