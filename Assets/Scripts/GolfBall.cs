@@ -1,31 +1,37 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using UnityEditor.Callbacks;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
 
 public class GolfBall : MonoBehaviour
 {
     [Tooltip("How slow the ball has to be before it can be considered \"still\"")]
-    [SerializeField] protected float speedThreshold = 1f;
+    [SerializeField] private float speedThreshold = 1f;
     [Tooltip("How long the ball must remain under the threshold before it is considered \"still\"")]
-    [SerializeField] protected float stillDuration = 0.5f;
+    [SerializeField] private float stillDuration = 0.5f;
     [Tooltip("How much force is applied to the ball at full charge")]
-    [SerializeField] protected float maxHitStrength = 2500f;
+    [SerializeField] private float maxHitStrength = 2500f;
     [Tooltip("Time in seconds to reach full charge and time to fall back to zero charge")]
-    [SerializeField] protected float chargeSpeed = 1f;
+    [SerializeField] private float chargeSpeed = 1f;
     [Tooltip("How fast the target angle changes in deg/sec")]
-    [SerializeField] protected float aimSpeed = 120f;
-    
-    protected string playerPrefix;
+    [SerializeField] private float aimSpeed = 120f;
+
+    [SerializeField] private string playerPrefix;
     private Rigidbody2D rb;
     private float targetAngle = 0f;
     private float chargeTime = 0f;
     private bool still = false;
     private float stillTime = 0f;
+
+    TrajectoryPredictor trajPredictor;
+
+
     protected void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        trajPredictor = GetComponent<TrajectoryPredictor>();
     }
     protected void Update()
     {
@@ -46,10 +52,20 @@ public class GolfBall : MonoBehaviour
 
         // Adjust target angle according to input
         targetAngle += Input.GetAxis(playerPrefix + "Horizontal") * Time.deltaTime * aimSpeed;
-        
+
         // Charge the hit
-        if (Input.GetAxisRaw(playerPrefix + "Vertical") > 0.1) {
+        if (Input.GetAxisRaw(playerPrefix + "Vertical") > 0.1)
+        {
             chargeTime += Time.deltaTime;
+            trajPredictor.Show();
+            Vector2 force = (CalculateHitPower(chargeTime) * maxHitStrength *
+                        new Vector2(-Mathf.Cos(targetAngle * Mathf.Deg2Rad), Mathf.Sin(targetAngle * Mathf.Deg2Rad)));
+            trajPredictor.UpdateDots(transform.position, force / rb.mass);
+
+
+
+
+
         }
         // Hit the ball
         else if (chargeTime > 0.01)
@@ -58,12 +74,18 @@ public class GolfBall : MonoBehaviour
             {
                 rb.AddForce(
                         CalculateHitPower(chargeTime) * maxHitStrength *
-                        new Vector2(-Mathf.Cos(targetAngle * Mathf.Deg2Rad), Mathf.Sin(targetAngle * Mathf.Deg2Rad)));
+                        new Vector2(-Mathf.Cos(targetAngle * Mathf.Deg2Rad), Mathf.Sin(targetAngle * Mathf.Deg2Rad)), ForceMode2D.Impulse);
             }
             chargeTime = 0;
-        } 
+            trajPredictor.Hide();
+
+        }
     }
     // Equation maps [0, infinity) to [0, 1] and bounces between 0 and 1
+
+
+
+
     private float CalculateHitPower(float time)
     {
         return 0.5f * (1 + -Mathf.Cos(Mathf.PI / chargeSpeed * time));
