@@ -84,7 +84,7 @@ public class GolfBall : MonoBehaviour
             if (P1shoot)
             {
                 rb.velocity = Vector3.zero;
-                rb.angularVelocity = 0;
+                
                 rb.AddForce(
                         CalculateHitPower(chargeTime1) * maxHitStrength *
                         new Vector2(-Mathf.Cos(targetAngle1 * Mathf.Deg2Rad), Mathf.Sin(targetAngle1 * Mathf.Deg2Rad)), ForceMode2D.Impulse);
@@ -114,7 +114,7 @@ public class GolfBall : MonoBehaviour
             if (P2shoot)
             {
                 rb.velocity = Vector3.zero;
-                rb.angularVelocity = 0;
+                
                 rb.AddForce(
                         CalculateHitPower(chargeTime2) * maxHitStrength *
                         new Vector2(-Mathf.Cos(targetAngle2 * Mathf.Deg2Rad), Mathf.Sin(targetAngle2 * Mathf.Deg2Rad)), ForceMode2D.Impulse);
