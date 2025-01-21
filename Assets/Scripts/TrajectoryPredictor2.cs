@@ -9,7 +9,7 @@ using UnityEngine.WSA;
 using System;
 using System.Linq;
 
-public class TrajectoryPredictor : MonoBehaviour
+public class TrajectoryPredictor2 : MonoBehaviour
 {
     [SerializeField] int dotsNum;
     [SerializeField] GameObject DotsParent;
@@ -17,6 +17,7 @@ public class TrajectoryPredictor : MonoBehaviour
     [SerializeField] float dotSpacing;
     [SerializeField] float dotMinScale;
     [SerializeField] float dotMaxScale;
+    [SerializeField] Color trajColor = Color.red;
 
     Transform[] dotsList;
     public Vector2 pos;
@@ -48,6 +49,8 @@ public class TrajectoryPredictor : MonoBehaviour
         for (int i = 0; i < dotsNum; i++)
         {
             trajectoryDots.Add(Instantiate(DotsPrefab, null));
+            SpriteRenderer render = trajectoryDots[i].GetComponent<SpriteRenderer>();
+            render.color = trajColor;
             dotsList[i] = trajectoryDots[i].transform;
             dotsList[i].parent = DotsParent.transform;
             trajectoryDots[i].transform.localScale *= scale;
