@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,7 +18,7 @@ public class GolfBall : MonoBehaviour
     [SerializeField] private float chargeSpeed = 1f;
     [Tooltip("How fast the target angle changes in deg/sec")]
     [SerializeField] private float aimSpeed = 120f;
-
+    [SerializeField] private float minForce = 2f;
     [SerializeField] private string playerPrefix1;
     [SerializeField] private string playerPrefix2;
     private Rigidbody2D rb;
@@ -43,6 +44,7 @@ public class GolfBall : MonoBehaviour
     }
     protected void Update()
     {
+
         if (rb.velocity.magnitude < speedThreshold && !still)
         {
             stillTime += Time.deltaTime;
@@ -68,7 +70,15 @@ public class GolfBall : MonoBehaviour
         if (Input.GetAxisRaw(playerPrefix1 + "Vertical") > 0.1)
         {
             chargeTime1 += Time.deltaTime;
-            trajPredictor1.Show();
+            if (P1shoot == true)
+            {
+                trajPredictor1.Show();
+            }
+            else
+            {
+                trajPredictor1.makeSeethrough();
+            }
+            
             Vector2 force = (CalculateHitPower(chargeTime1) * maxHitStrength *
                         new Vector2(-Mathf.Cos(targetAngle1 * Mathf.Deg2Rad), Mathf.Sin(targetAngle1 * Mathf.Deg2Rad)));
             trajPredictor1.UpdateDots(transform.position, force / rb.mass);
@@ -97,8 +107,15 @@ public class GolfBall : MonoBehaviour
         if (Input.GetAxisRaw(playerPrefix2 + "Vertical") > 0.1)
         {
             chargeTime2 += Time.deltaTime;
-            trajPredictor2.Show();
-
+            
+            if (P2shoot==true)
+            {
+                trajPredictor2.Show();
+            }
+            else
+            {
+                trajPredictor2.makeSeethrough();
+            }
             Vector2 force = (CalculateHitPower(chargeTime2) * maxHitStrength *
                         new Vector2(-Mathf.Cos(targetAngle2 * Mathf.Deg2Rad), Mathf.Sin(targetAngle2 * Mathf.Deg2Rad)));
             trajPredictor2.UpdateDots(transform.position, force / rb.mass);
@@ -133,7 +150,7 @@ public class GolfBall : MonoBehaviour
 
     private float CalculateHitPower(float time)
     {
-        return 0.5f * (1 + -Mathf.Cos(Mathf.PI / chargeSpeed * time));
+        return 0.5f * (1 + -Mathf.Cos(Mathf.PI / chargeSpeed * time)) + minForce;
     }
     
     

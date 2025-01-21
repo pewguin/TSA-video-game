@@ -944,6 +944,7 @@ MonoBehaviour:
   maxHitStrength: 40
   chargeSpeed: 1
   aimSpeed: 120
+  minForce: 0.5
   playerPrefix1: P1
   playerPrefix2: P2
 --- !u!114 &1855782965
@@ -960,7 +961,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   dotsNum: 50
   DotsParent: {fileID: 1776902255}
-  DotsPrefab: {fileID: 6894412166824724878, guid: 71a6f2d508b40d04d8a97522cf2bd58f, type: 3}
+  DotsPrefab: {fileID: 5529193516988367498, guid: d6626651fb3e0f24e9700ce3b2e3680d, type: 3}
   dotSpacing: 0.04
   dotMinScale: 0.02
   dotMaxScale: 0.2

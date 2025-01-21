@@ -33,6 +33,13 @@ public class TrajectoryPredictor2 : MonoBehaviour
     {
         DotsParent.SetActive(true);
         trajectoryDots.ForEach(obj => obj.SetActive(true));
+        for (int i = 0; i < dotsNum; i++)
+        {
+            SpriteRenderer render = trajectoryDots[i].GetComponent<SpriteRenderer>();
+            Color color = render.color;
+            color.a = 1f;
+            render.color = color;
+        }
     }
     public void Hide()
     {
@@ -89,6 +96,20 @@ public class TrajectoryPredictor2 : MonoBehaviour
 
             time += dotSpacing;
         }
+    }
+    public void makeSeethrough()
+    {
+        
+        for (int i = 0; i < dotsNum; i++)
+        {
+            SpriteRenderer render = trajectoryDots[i].GetComponent<SpriteRenderer>();
+            Color color = render.color;
+            color.a = 0.5f;
+            render.color = color;
+        }
+        DotsParent.SetActive(true);
+        trajectoryDots.ForEach(obj => obj.SetActive(true));
+
     }
 
 
