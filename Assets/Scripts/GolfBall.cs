@@ -2,6 +2,8 @@ using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
+using Unity.VisualScripting;
 using UnityEditor.Callbacks;
 using UnityEngine;
 using static UnityEngine.GraphicsBuffer;
@@ -21,6 +23,9 @@ public class GolfBall : MonoBehaviour
     [SerializeField] private float minForce = 2f;
     [SerializeField] private string playerPrefix1;
     [SerializeField] private string playerPrefix2;
+
+    [SerializeField] private float minRotationaVelo = -10f;
+    [SerializeField] private float maxRotationaVelo = 10f;
     private Rigidbody2D rb;
     private float targetAngle1 = 0f;
     private float targetAngle2 = 0f;
@@ -31,10 +36,12 @@ public class GolfBall : MonoBehaviour
     private bool P1shoot = true;
     private bool P2shoot = true;
 
+    private bool canTrigger = true;
+
     TrajectoryPredictor1 trajPredictor1;
     TrajectoryPredictor2 trajPredictor2;
 
-
+    Collider2D jankCoding;
 
     protected void Start()
     {
@@ -78,10 +85,11 @@ public class GolfBall : MonoBehaviour
             {
                 trajPredictor1.makeSeethrough();
             }
-            
+
             Vector2 force = (CalculateHitPower(chargeTime1) * maxHitStrength *
                         new Vector2(-Mathf.Cos(targetAngle1 * Mathf.Deg2Rad), Mathf.Sin(targetAngle1 * Mathf.Deg2Rad)));
             trajPredictor1.UpdateDots(transform.position, force / rb.mass);
+
 
 
 
@@ -94,10 +102,11 @@ public class GolfBall : MonoBehaviour
             if (P1shoot)
             {
                 rb.velocity = Vector3.zero;
-                
+
                 rb.AddForce(
                         CalculateHitPower(chargeTime1) * maxHitStrength *
                         new Vector2(-Mathf.Cos(targetAngle1 * Mathf.Deg2Rad), Mathf.Sin(targetAngle1 * Mathf.Deg2Rad)), ForceMode2D.Impulse);
+                rb.AddTorque(Random.Range(minRotationaVelo, maxRotationaVelo), ForceMode2D.Impulse);
                 P1shoot = false;
             }
             chargeTime1 = 0;
@@ -107,8 +116,8 @@ public class GolfBall : MonoBehaviour
         if (Input.GetAxisRaw(playerPrefix2 + "Vertical") > 0.1)
         {
             chargeTime2 += Time.deltaTime;
-            
-            if (P2shoot==true)
+
+            if (P2shoot == true)
             {
                 trajPredictor2.Show();
             }
@@ -131,10 +140,12 @@ public class GolfBall : MonoBehaviour
             if (P2shoot)
             {
                 rb.velocity = Vector3.zero;
-                
+
                 rb.AddForce(
                         CalculateHitPower(chargeTime2) * maxHitStrength *
                         new Vector2(-Mathf.Cos(targetAngle2 * Mathf.Deg2Rad), Mathf.Sin(targetAngle2 * Mathf.Deg2Rad)), ForceMode2D.Impulse);
+
+                rb.AddTorque(Random.Range(minRotationaVelo, maxRotationaVelo), ForceMode2D.Impulse);
                 P2shoot = false;
             }
             chargeTime2 = 0;
@@ -152,6 +163,34 @@ public class GolfBall : MonoBehaviour
     {
         return 0.5f * (1 + -Mathf.Cos(Mathf.PI / chargeSpeed * time)) + minForce;
     }
-    
-    
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("HitRefresher") && canTrigger)
+        {
+            jankCoding = collision;
+            P1shoot = true;
+            P2shoot = true;
+            
+            StartCoroutine(Cooldown(collision));
+            
+        }
+
+    }
+    private IEnumerator Cooldown(Collider2D collider)
+    {
+        SpriteRenderer renderer = collider.gameObject.GetComponent<SpriteRenderer>();
+        collider.enabled = false;
+        Color color = renderer.color;
+        color.a = 0.5f;
+        renderer.color = color;
+        color.a = 1f;
+        canTrigger = false;
+        yield return new WaitForSecondsRealtime(5);
+        canTrigger = true;
+        renderer.color = color;
+        collider.enabled = true;
+
+    }
+
 }

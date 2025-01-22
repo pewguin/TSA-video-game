@@ -947,6 +947,8 @@ MonoBehaviour:
   minForce: 0.5
   playerPrefix1: P1
   playerPrefix2: P2
+  minRotationaVelo: -10
+  maxRotationaVelo: 10
 --- !u!114 &1855782965
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1120,8 +1122,8 @@ SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
   - {fileID: 1499713335884094401}
-  - {fileID: 705507995}
   - {fileID: 3745688454997726471}
-  - {fileID: 495680276}
   - {fileID: 1660658724}
   - {fileID: 1039226631}
+  - {fileID: 705507995}
+  - {fileID: 495680276}

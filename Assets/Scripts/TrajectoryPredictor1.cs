@@ -33,7 +33,6 @@ public class TrajectoryPredictor1 : MonoBehaviour
     {
         DotsParent.SetActive(true);
         trajectoryDots.ForEach(obj => obj.SetActive(true));
-
         for (int i = 0; i < dotsNum; i++)
         {
             SpriteRenderer render = trajectoryDots[i].GetComponent<SpriteRenderer>();
@@ -98,7 +97,7 @@ public class TrajectoryPredictor1 : MonoBehaviour
             time += dotSpacing;
         }
     }
-    public void makeSeethrough ()
+    public void makeSeethrough()
     {
 
         for (int i = 0; i < dotsNum; i++)

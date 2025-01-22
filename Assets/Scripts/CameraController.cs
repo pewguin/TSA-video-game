@@ -11,6 +11,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] float moveSpeed = 0.1f;
     [SerializeField] float scaleSpeed = 0.1f;
     [SerializeField] float bufferAroundBalls = 2f;
+    [SerializeField] Vector2 minBound;
+    [SerializeField] Vector2 maxBound;
+    
+
     private Vector3 setPos;
     private Vector2 setExtends;
     private float minYExtend;
@@ -24,16 +28,20 @@ public class CameraController : MonoBehaviour
     }
     private void Update()
     {
+        
         setExtends.x = Mathf.Abs(Object1.position.x - Object2.position.x) + 2 * bufferAroundBalls;
         setExtends.y = Mathf.Abs(Object1.position.y - Object2.position.y) + 2 * bufferAroundBalls;
         setExtends /= 2;
+     
 
         setPos.x = (Object1.position.x + Object2.position.x) / 2;
         float low = Mathf.Min(Object1.position.y, Object2.position.y);
         setPos.y = low + GetHeightExtend(setExtends) - bufferAroundBalls;
 
         transform.position = Vector3.Lerp(transform.position, setPos, moveSpeed);
+        
         cam.orthographicSize = Mathf.Max(Mathf.Lerp(cam.orthographicSize, GetHeightExtend(setExtends), scaleSpeed), minYExtend);
+        
     }
 
     private Vector2 GetCameraExtends()
