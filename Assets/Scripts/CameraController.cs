@@ -13,7 +13,8 @@ public class CameraController : MonoBehaviour
     [SerializeField] float bufferAroundBalls = 2f;
     [SerializeField] Vector2 minBound;
     [SerializeField] Vector2 maxBound;
-    
+
+    public Vector3 offset;
 
     private Vector3 setPos;
     private Vector2 setExtends;
@@ -38,7 +39,7 @@ public class CameraController : MonoBehaviour
         float low = Mathf.Min(Object1.position.y, Object2.position.y);
         setPos.y = low + GetHeightExtend(setExtends) - bufferAroundBalls;
 
-        transform.position = Vector3.Lerp(transform.position, setPos, moveSpeed);
+        transform.position = Vector3.Lerp(transform.position, setPos, moveSpeed) + offset;
         
         cam.orthographicSize = Mathf.Max(Mathf.Lerp(cam.orthographicSize, GetHeightExtend(setExtends), scaleSpeed), minYExtend);
         

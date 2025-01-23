@@ -43,6 +43,8 @@ public class GolfBall : MonoBehaviour
 
     Collider2D jankCoding;
 
+    //public AudioSource HitSFX;
+
     protected void Start()
     {
         rb = GetComponent<Rigidbody2D>();
@@ -111,7 +113,6 @@ public class GolfBall : MonoBehaviour
             }
             chargeTime1 = 0;
             trajPredictor1.Hide();
-
         }
         if (Input.GetAxisRaw(playerPrefix2 + "Vertical") > 0.1)
         {
@@ -150,7 +151,6 @@ public class GolfBall : MonoBehaviour
             }
             chargeTime2 = 0;
             trajPredictor2.Hide();
-
         }
 
     }

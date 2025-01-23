@@ -5,14 +5,20 @@ using UnityEngine.SceneManagement;
 
 public class MainMenu : MonoBehaviour
 {
-
+    public Animator anim;
     public void PlayGame()
     {
-        SceneManager.LoadSceneAsync(1);
+        StartCoroutine(Transition());
     }
     public void QuitGame()
     {
         Application.Quit();
     }
 
+    IEnumerator Transition()
+    {
+        anim.SetTrigger("Exit");
+        yield return new WaitForSeconds(0.5f);
+        SceneManager.LoadSceneAsync(1);
+    }
 }

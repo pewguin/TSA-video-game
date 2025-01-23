@@ -5,7 +5,8 @@ using UnityEngine.SceneManagement;
 
 public class SceneTransitioner: MonoBehaviour
 {
-    private Animator anim;
+    private Animator doorAnim;
+    public Animator transitionAnim;
     public Vector3 targetPos;
     private Rigidbody2D playerRB;
     public bool pulling;
@@ -16,7 +17,7 @@ public class SceneTransitioner: MonoBehaviour
 
     private void Start()
     {
-        anim = GetComponent<Animator>();
+        doorAnim = GetComponent<Animator>();
     }
 
     private void Update()
@@ -44,7 +45,7 @@ public class SceneTransitioner: MonoBehaviour
 
     IEnumerator ExitThroughDoor(GameObject player)
     {
-        anim.SetTrigger("open");
+        doorAnim.SetTrigger("open");
         yield return new WaitForSeconds(0.4f);
         pulling = true;
         escapeWall.enabled = true;
@@ -54,8 +55,8 @@ public class SceneTransitioner: MonoBehaviour
 
     IEnumerator TransitionNextLevel()
     {
-        //transition
-        yield return new WaitForSeconds(0.1f); //change to anim length
+        transitionAnim.SetTrigger("Exit");
+        yield return new WaitForSeconds(0.5f); //change to anim length
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }
