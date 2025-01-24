@@ -6,54 +6,52 @@ using UnityEngine;
 public class CameraController : MonoBehaviour
 {
     Camera cam;
-    [SerializeField] Transform Object1;
-    [SerializeField] Transform Object2;
-    [SerializeField] float moveSpeed = 0.1f;
-    [SerializeField] float scaleSpeed = 0.1f;
-    [SerializeField] float bufferAroundBalls = 2f;
-    [SerializeField] Vector2 minBound;
-    [SerializeField] Vector2 maxBound;
-
-    public Vector3 offset;
-
-    private Vector3 setPos;
-    private Vector2 setExtends;
-    private float minYExtend;
-    private float z;
+    [SerializeField] Transform obj;
+    [SerializeField] float speed;
+    Vector3 bottomLeft;
+    Vector3 topRight;
+    float z = 0;
     private void Start()
     {
         z = transform.position.z;
         cam = GetComponent<Camera>();
-        minYExtend = cam.orthographicSize;
-        setPos = Vector3.forward * z;
+        foreach (Transform t in GetComponentsInChildren<Transform>())
+        {
+            if (t.name == "bottomLeft")
+            {
+                bottomLeft = t.transform.position;
+            }
+            else if (t.name == "topRight")
+            {
+                topRight = t.transform.position;
+            }
+        }
+        if (topRight == null || bottomLeft == null)
+        {
+            Debug.LogError("Give the camera two gameobjects, named bottomLeft and topRight to specify bounds.");
+        }
     }
     private void Update()
     {
-        
-        setExtends.x = Mathf.Abs(Object1.position.x - Object2.position.x) + 2 * bufferAroundBalls;
-        setExtends.y = Mathf.Abs(Object1.position.y - Object2.position.y) + 2 * bufferAroundBalls;
-        setExtends /= 2;
-     
-
-        setPos.x = (Object1.position.x + Object2.position.x) / 2;
-        float low = Mathf.Min(Object1.position.y, Object2.position.y);
-        setPos.y = low + GetHeightExtend(setExtends) - bufferAroundBalls;
-
-        transform.position = Vector3.Lerp(transform.position, setPos, moveSpeed) + offset;
-        
-        cam.orthographicSize = Mathf.Max(Mathf.Lerp(cam.orthographicSize, GetHeightExtend(setExtends), scaleSpeed), minYExtend);
-        
-    }
-
-    private Vector2 GetCameraExtends()
-    {
-        return new Vector2(cam.orthographicSize * cam.aspect, cam.orthographicSize);
-    }
-    private float GetHeightExtend(Vector2 extends)
-    {
-        float vert = extends.y;
-        float horz = extends.x / cam.aspect;
-
-        return Mathf.Max(vert, horz);
+        transform.position = Vector3.Lerp(transform.position, obj.position, Time.deltaTime * speed);
+        Vector3 newPos = transform.position;
+        if (transform.position.y + cam.orthographicSize > topRight.y)
+        {
+            newPos.y = topRight.y - cam.orthographicSize;
+        }
+        if (transform.position.y - cam.orthographicSize < bottomLeft.y)
+        {
+            newPos.y = bottomLeft.y + cam.orthographicSize;
+        }
+        if (transform.position.x + cam.orthographicSize * cam.aspect > topRight.x)
+        {
+            newPos.x = topRight.x - cam.orthographicSize * cam.aspect;
+        }
+        if (transform.position.x - cam.orthographicSize * cam.aspect < bottomLeft.x)
+        {
+            newPos.x = bottomLeft.x + cam.orthographicSize * cam.aspect;
+        }
+        newPos.z = z;
+        transform.position = newPos;
     }
 }
