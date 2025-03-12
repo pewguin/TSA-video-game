@@ -18,6 +18,7 @@ public class GolfBall : MonoBehaviour
     [SerializeField] private float maxHitStrength = 2500f;
     [Tooltip("Time in seconds to reach full charge and time to fall back to zero charge")]
     [SerializeField] private float chargeSpeed = 1f;
+    [SerializeField] private float maxChargeSeconds = 3f;
     [Tooltip("How fast the target angle changes in deg/sec")]
     [SerializeField] private float aimSpeed = 120f;
     [SerializeField] private float minForce = 2f;
@@ -29,8 +30,8 @@ public class GolfBall : MonoBehaviour
     private Rigidbody2D rb;
     private float targetAngle1 = 0f;
     private float targetAngle2 = 0f;
-    private float chargeTime1 = 0f;
-    private float chargeTime2 = 0f;
+    public float chargeTime1 = 0f;
+    public float chargeTime2 = 0f;
     private bool still = false;
     private float stillTime = 0f;
     private bool P1shoot = true;
@@ -72,13 +73,29 @@ public class GolfBall : MonoBehaviour
         }
 
         // Adjust target angle according to input
-        targetAngle1 += Input.GetAxis(playerPrefix1 + "Horizontal") * Time.deltaTime * aimSpeed;
-        targetAngle2 += Input.GetAxis(playerPrefix2 + "Horizontal") * Time.deltaTime * aimSpeed;
+        targetAngle1 += Input.GetKey(KeyCode.D) ? 1 : Input.GetKey(KeyCode.A) ? -1 : 0 * Time.deltaTime * aimSpeed;
+        targetAngle2 += Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0 * Time.deltaTime * aimSpeed;
 
         // Charge the hit
-        if (Input.GetAxisRaw(playerPrefix1 + "Vertical") > 0.1)
+        if (Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
         {
-            chargeTime1 += Time.deltaTime;
+            chargeTime1 = Mathf.Min(maxChargeSeconds, chargeTime1 + Time.deltaTime);
+            if (P1shoot == true)
+            {
+                trajPredictor1.Show();
+            }
+            else
+            {
+                trajPredictor1.makeSeethrough();
+            }
+
+            Vector2 force = (CalculateHitPower(chargeTime1) * maxHitStrength *
+                        new Vector2(-Mathf.Cos(targetAngle1 * Mathf.Deg2Rad), Mathf.Sin(targetAngle1 * Mathf.Deg2Rad)));
+            trajPredictor1.UpdateDots(transform.position, force / rb.mass);
+        }
+        else if (Input.GetKey(KeyCode.S) && !Input.GetKey(KeyCode.W))
+        {
+            chargeTime1 = Mathf.Max(0.011f, chargeTime1 - Time.deltaTime);
             if (P1shoot == true)
             {
                 trajPredictor1.Show();
@@ -92,14 +109,9 @@ public class GolfBall : MonoBehaviour
                         new Vector2(-Mathf.Cos(targetAngle1 * Mathf.Deg2Rad), Mathf.Sin(targetAngle1 * Mathf.Deg2Rad)));
             trajPredictor1.UpdateDots(transform.position, force / rb.mass);
 
-
-
-
-
-
         }
         // Hit the ball
-        else if (chargeTime1 > 0.01)
+        else if (chargeTime1 > 0.01 && !Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
         {
             if (P1shoot)
             {
@@ -114,9 +126,15 @@ public class GolfBall : MonoBehaviour
             chargeTime1 = 0;
             trajPredictor1.Hide();
         }
-        if (Input.GetAxisRaw(playerPrefix2 + "Vertical") > 0.1)
+        else
         {
-            chargeTime2 += Time.deltaTime;
+            Vector2 force = (CalculateHitPower(chargeTime1) * maxHitStrength *
+                        new Vector2(-Mathf.Cos(targetAngle1 * Mathf.Deg2Rad), Mathf.Sin(targetAngle1 * Mathf.Deg2Rad)));
+            trajPredictor1.UpdateDots(transform.position, force / rb.mass);
+        }
+        if (Input.GetKey(KeyCode.UpArrow) && !Input.GetKey(KeyCode.DownArrow))
+        {
+            chargeTime2 = Mathf.Min(maxChargeSeconds, chargeTime2 + Time.deltaTime);
 
             if (P2shoot == true)
             {
@@ -129,14 +147,25 @@ public class GolfBall : MonoBehaviour
             Vector2 force = (CalculateHitPower(chargeTime2) * maxHitStrength *
                         new Vector2(-Mathf.Cos(targetAngle2 * Mathf.Deg2Rad), Mathf.Sin(targetAngle2 * Mathf.Deg2Rad)));
             trajPredictor2.UpdateDots(transform.position, force / rb.mass);
+        }
+        else if (Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow))
+        {
+            chargeTime2 = Mathf.Max(0.011f, chargeTime2 - Time.deltaTime);
 
-
-
-
-
+            if (P2shoot == true)
+            {
+                trajPredictor2.Show();
+            }
+            else
+            {
+                trajPredictor2.makeSeethrough();
+            }
+            Vector2 force = (CalculateHitPower(chargeTime2) * maxHitStrength *
+                        new Vector2(-Mathf.Cos(targetAngle2 * Mathf.Deg2Rad), Mathf.Sin(targetAngle2 * Mathf.Deg2Rad)));
+            trajPredictor2.UpdateDots(transform.position, force / rb.mass);
         }
         // Hit the ball
-        else if (chargeTime2 > 0.01)
+        else if (chargeTime2 > 0.01 && !Input.GetKey(KeyCode.DownArrow) && !Input.GetKey(KeyCode.UpArrow))
         {
             if (P2shoot)
             {
@@ -152,16 +181,17 @@ public class GolfBall : MonoBehaviour
             chargeTime2 = 0;
             trajPredictor2.Hide();
         }
+        else
+        {
+            Vector2 force = (CalculateHitPower(chargeTime2) * maxHitStrength *
+                        new Vector2(-Mathf.Cos(targetAngle2 * Mathf.Deg2Rad), Mathf.Sin(targetAngle2 * Mathf.Deg2Rad)));
+            trajPredictor2.UpdateDots(transform.position, force / rb.mass);
+        }
 
     }
-    // Equation maps [0, infinity) to [0, 1] and bounces between 0 and 1
-
-
-
-
     private float CalculateHitPower(float time)
     {
-        return 0.5f * (1 + -Mathf.Cos(Mathf.PI / chargeSpeed * time)) + minForce;
+        return chargeSpeed * Mathf.Pow(Mathf.Max(0.01f, time), 0.5f) + minForce;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
