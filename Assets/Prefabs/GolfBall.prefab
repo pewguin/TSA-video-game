@@ -32,8 +32,8 @@ Transform:
   m_GameObject: {fileID: 7166241691226408431}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -20.56, y: -3.03, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 5.071537, y: 5.0156927, z: 0.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -79,7 +79,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: feecaf76d40ba9a499bd67d5a36452be, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 482eda9fe2f534ae2a4b5791ebad1dac, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -122,9 +122,9 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: -0.028036192, y: 0.005154121}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.074359536
 --- !u!50 &6387609111041407746
 Rigidbody2D:
   serializedVersion: 4
@@ -168,13 +168,15 @@ MonoBehaviour:
   stillDuration: 0.5
   maxHitStrength: 40
   chargeSpeed: 1
+  maxChargeSeconds: 3
   aimSpeed: 120
   minForce: 0.5
   playerPrefix1: P1
   playerPrefix2: P2
   minRotationaVelo: -1
   maxRotationaVelo: 1
-  HitSFX: {fileID: 8185429348966369080}
+  chargeTime1: 0
+  chargeTime2: 0
 --- !u!114 &42983813186268534
 MonoBehaviour:
   m_ObjectHideFlags: 0
