@@ -20,10 +20,16 @@ public class CaddyBossScript : MonoBehaviour
     public GameObject clubAttack;
 
     public HatchLidScript hatch;
+    [SerializeField] int playerMaxHealth = 3; // Die when you hit 0
+    public int playerHealth;
+
+    public GameObject ejectEffect;
+    public GameObject catchEffect;
 
     // Start is called before the first frame update
     void Start()
     {
+        playerHealth = playerMaxHealth;
         StartCoroutine(StartFightDelay());
         numOfAttacksCounter = numOfAttacks;
     }
@@ -53,7 +59,7 @@ public class CaddyBossScript : MonoBehaviour
         }
         if (health < 0)
         {
-            // WIN!
+            Debug.Log("you win!");
         }
 
         
@@ -84,5 +90,18 @@ public class CaddyBossScript : MonoBehaviour
     {
         health--;
         Debug.Log("hit!");
+        StartCoroutine(ToggleActiveForSeconds(1.5f, ejectEffect));
+        StartCoroutine(ToggleActiveForSeconds(1.5f, catchEffect));
+        hatch.RotateToStart();
+        attackIntervalTimer = startAttackInterval;
+        attacking = true;
+    }
+
+    public IEnumerator ToggleActiveForSeconds(float time, GameObject go)
+    {
+        go.SetActive(!go.activeSelf);
+        yield return new WaitForSeconds(time);
+        go.SetActive(!go.activeSelf);
+        hatch.RotateToStart();
     }
 }
