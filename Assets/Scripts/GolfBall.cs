@@ -247,6 +247,7 @@ public class GolfBall : MonoBehaviour
             if (boss.playerHealth <= 0)
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+                // sobbing
             }
         }
     }
