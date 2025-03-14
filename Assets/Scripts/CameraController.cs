@@ -10,7 +10,7 @@ public class CameraController : MonoBehaviour
     [SerializeField] float speed;
     Vector3 bottomLeft;
     Vector3 topRight;
-    float z = 0;
+    float z = -10;
     private void Start()
     {
         z = transform.position.z;
@@ -33,25 +33,26 @@ public class CameraController : MonoBehaviour
     }
     private void Update()
     {
-        transform.position = Vector3.Lerp(transform.position, obj.position, Time.deltaTime * speed);
-        Vector3 newPos = transform.position;
-        if (transform.position.y + cam.orthographicSize > topRight.y)
+       
+        Vector3 newPos = obj.position;
+        if (newPos.y + cam.orthographicSize > topRight.y)
         {
             newPos.y = topRight.y - cam.orthographicSize;
         }
-        if (transform.position.y - cam.orthographicSize < bottomLeft.y)
+        if (newPos.y - cam.orthographicSize < bottomLeft.y)
         {
             newPos.y = bottomLeft.y + cam.orthographicSize;
         }
-        if (transform.position.x + cam.orthographicSize * cam.aspect > topRight.x)
+        if (newPos.x + (cam.orthographicSize * cam.aspect) > topRight.x)
         {
-            newPos.x = topRight.x - cam.orthographicSize * cam.aspect;
+            newPos.x = topRight.x - (cam.orthographicSize * cam.aspect);
         }
-        if (transform.position.x - cam.orthographicSize * cam.aspect < bottomLeft.x)
+        if (newPos.x - (cam.orthographicSize * cam.aspect) < bottomLeft.x)
         {
-            newPos.x = bottomLeft.x + cam.orthographicSize * cam.aspect;
+            newPos.x = bottomLeft.x + (cam.orthographicSize * cam.aspect);
         }
         newPos.z = z;
-        transform.position = newPos;
+        
+        transform.position = Vector3.Lerp(transform.position, newPos, Time.deltaTime * speed);
     }
 }
