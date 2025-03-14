@@ -6708,6 +6708,10 @@ PrefabInstance:
       propertyPath: maxHitStrength
       value: 35
       objectReference: {fileID: 0}
+    - target: {fileID: 8098875177390988883, guid: b8250064e0d68ef4e9d59d5291b83196, type: 3}
+      propertyPath: m_Radius
+      value: 0.3
+      objectReference: {fileID: 0}
     - target: {fileID: 8185429348966369080, guid: b8250064e0d68ef4e9d59d5291b83196, type: 3}
       propertyPath: m_Enabled
       value: 0
