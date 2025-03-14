@@ -18,6 +18,9 @@ EditorBuildSettings:
     path: Assets/Scenes/L1-Climb.unity
     guid: 8c6a392a77ce9ed45a73d49f8ed883b6
   - enabled: 1
+    path: Assets/Scenes/L2-Ground.unity
+    guid: 250aafc7883d2e2439eb5605f2b4ebb0
+  - enabled: 1
     path: Assets/Scenes/L2.5-CaddyTransition.unity
     guid: 961756a98aacbfb4a95f9f97801b9e91
   - enabled: 1
