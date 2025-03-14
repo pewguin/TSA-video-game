@@ -1683,7 +1683,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -1
   m_Sprite: {fileID: 21300000, guid: 66dc601d812596640891761be20d0351, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -1791,6 +1791,7 @@ PrefabInstance:
     - {fileID: 7852048060577919761, guid: b8250064e0d68ef4e9d59d5291b83196, type: 3}
     - {fileID: 42983813186268534, guid: b8250064e0d68ef4e9d59d5291b83196, type: 3}
     - {fileID: 5258978550765978901, guid: b8250064e0d68ef4e9d59d5291b83196, type: 3}
+    - {fileID: 8185429348966369080, guid: b8250064e0d68ef4e9d59d5291b83196, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
