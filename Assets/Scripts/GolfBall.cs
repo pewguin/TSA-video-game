@@ -25,6 +25,10 @@ public class GolfBall : MonoBehaviour
     [SerializeField] private float minForce = 2f;
     [SerializeField] private string playerPrefix1;
     [SerializeField] private string playerPrefix2;
+# nullable enable
+    [SerializeField] private CaddyBossScript? boss;
+# nullable disable
+    [SerializeField] private float knockback = 1000;
 
     [SerializeField] private float minRotationaVelo = -10f;
     [SerializeField] private float maxRotationaVelo = 10f;
@@ -75,7 +79,6 @@ public class GolfBall : MonoBehaviour
 
         // Adjust target angle according to input
         targetAngle1 += (Input.GetKey(KeyCode.D) ? 1 : Input.GetKey(KeyCode.A) ? -1 : 0) * Time.deltaTime * aimSpeed;
-       
         targetAngle2 += (Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0) * Time.deltaTime * aimSpeed;
 
         // Charge the hit
@@ -233,11 +236,18 @@ public class GolfBall : MonoBehaviour
         if (col.gameObject.CompareTag("club"))
         {
             Die();
+            rb.AddForce((col.GetContact(0).point - (Vector2)transform.position) * knockback, ForceMode2D.Force);
         }
     }
     void Die()
     {
-        Debug.Log("Die");
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        if (boss != null)
+        {
+            boss.playerHealth--;
+            if (boss.playerHealth <= 0)
+            {
+                SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+            }
+        }
     }
 }
