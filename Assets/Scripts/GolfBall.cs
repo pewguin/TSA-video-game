@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using Unity.VisualScripting;
 using UnityEditor.Callbacks;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using static UnityEngine.GraphicsBuffer;
 
 public class GolfBall : MonoBehaviour
@@ -205,7 +206,10 @@ public class GolfBall : MonoBehaviour
             StartCoroutine(Cooldown(collision));
             
         }
-
+        if (collision.gameObject.CompareTag("club")) //SELF DESTRUCT
+        {
+            collision.transform.parent.GetComponent<CaddyBossScript>().SelfDestruct();
+        }
     }
     private IEnumerator Cooldown(Collider2D collider)
     {
@@ -223,4 +227,16 @@ public class GolfBall : MonoBehaviour
 
     }
 
+    private void OnCollisionEnter2D(Collision2D col)
+    {
+        if (col.gameObject.CompareTag("club"))
+        {
+            Die();
+        }
+    }
+    void Die()
+    {
+        Debug.Log("Die");
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+    }
 }

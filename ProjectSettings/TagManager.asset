@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - HitRefresher
+  - club
   layers:
   - Default
   - TransparentFX
