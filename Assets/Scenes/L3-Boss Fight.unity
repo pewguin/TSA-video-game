@@ -232,7 +232,9 @@ MonoBehaviour:
   clubAttack: {fileID: 2649488963782010718, guid: ea0e71007b24a2e43bf949d02bbd614b, type: 3}
   hatch: {fileID: 538323733}
   playerMaxHealth: 3
-  playerHealth: 0
+  playerHealth: 3
+  ejectEffect: {fileID: 321508086}
+  catchEffect: {fileID: 1978214916}
 --- !u!1 &62394530
 GameObject:
   m_ObjectHideFlags: 0
@@ -442,7 +444,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &321508087
 Transform:
   m_ObjectHideFlags: 0
@@ -1589,11 +1591,12 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: 0.6189489, y: 0.9257262}
+    - - {x: 0.6694269, y: 1.0519218}
+      - {x: 0.42106414, y: 1.0901496}
       - {x: 0.2899353, y: 0.8567866}
       - {x: 0.56346005, y: 0.71669203}
       - {x: 0.7425223, y: 0.53719664}
-      - {x: 0.7158565, y: 0.8165554}
+      - {x: 0.7537151, y: 0.99007434}
   m_UseDelaunayMesh: 0
 --- !u!249 &1978214919
 AreaEffector2D:
