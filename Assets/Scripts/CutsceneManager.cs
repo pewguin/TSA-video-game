@@ -44,7 +44,14 @@ public class CutsceneManager : MonoBehaviour
             }
             else if (textId >= seperatedText.Length - 1)
             {
-                SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
+                if (SceneManager.GetActiveScene().buildIndex == 6)
+                {
+                    Application.Quit();
+                } else
+                {
+                    SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex + 1);
+                }
+                
             }
         }
 

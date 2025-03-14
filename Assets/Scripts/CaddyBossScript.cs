@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class CaddyBossScript : MonoBehaviour
 {
@@ -25,6 +27,8 @@ public class CaddyBossScript : MonoBehaviour
 
     public GameObject ejectEffect;
     public GameObject catchEffect;
+    public Image[] hearts;
+    public Slider slid;
 
     // Start is called before the first frame update
     void Start()
@@ -61,7 +65,10 @@ public class CaddyBossScript : MonoBehaviour
         {
             Debug.Log("you win!");
         }
-
+        if (playerHealth < playerMaxHealth)
+        {
+            hearts[playerHealth].color = Color.white * 0.5f;
+        }
         
     }
 
@@ -77,7 +84,7 @@ public class CaddyBossScript : MonoBehaviour
 
     public void Attack()
     {
-        Instantiate(clubAttack, new Vector3(player.position.x, clubAttack.transform.position.y, 0), clubAttack.transform.rotation); 
+        Instantiate(clubAttack, new Vector3(player.position.x, clubAttack.transform.position.y + player.position.y, 0), clubAttack.transform.rotation); 
     }
 
     private IEnumerator StartFightDelay()
@@ -95,6 +102,11 @@ public class CaddyBossScript : MonoBehaviour
         hatch.RotateToStart();
         attackIntervalTimer = startAttackInterval;
         attacking = true;
+        slid.value = health / 3f;
+        if (health == 0)
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+        }
     }
 
     public IEnumerator ToggleActiveForSeconds(float time, GameObject go)

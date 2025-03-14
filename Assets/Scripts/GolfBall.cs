@@ -46,6 +46,7 @@ public class GolfBall : MonoBehaviour
 
     TrajectoryPredictor1 trajPredictor1;
     TrajectoryPredictor2 trajPredictor2;
+    Vector3 resetpos;
 
     Collider2D jankCoding;
 
@@ -56,6 +57,7 @@ public class GolfBall : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         trajPredictor1 = GetComponent<TrajectoryPredictor1>();
         trajPredictor2 = GetComponent<TrajectoryPredictor2>();
+        resetpos = transform.position;
     }
     protected void Update()
     {
@@ -236,7 +238,14 @@ public class GolfBall : MonoBehaviour
         if (col.gameObject.CompareTag("club"))
         {
             Die();
-            rb.AddForce((col.GetContact(0).point - (Vector2)transform.position) * knockback, ForceMode2D.Force);
+            rb.AddForce(((Vector2)transform.position - col.GetContact(0).point).normalized * knockback, ForceMode2D.Force);
+            col.collider.enabled = false;
+            P1shoot = true;
+            P2shoot = true;
+        }
+        if (col.gameObject.CompareTag("carpet"))
+        {
+            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
     }
     void Die()
