@@ -25,7 +25,7 @@ public class SceneTransitioner: MonoBehaviour
         if (pulling)
         {
             playerRB.AddForce((targetPos - playerRB.transform.position).normalized * pullForce * Time.deltaTime, ForceMode2D.Force);
-            if (acceptPulledBall & (playerRB.transform.position - targetPos).sqrMagnitude < 0.01f)
+            if (acceptPulledBall & (playerRB.transform.position - targetPos).sqrMagnitude < 0.02f)
             {
                 playerRB.velocity = Vector2.zero;
                 playerRB.transform.position = targetPos;

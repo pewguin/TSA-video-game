@@ -86,5 +86,6 @@ public class CaddyBossScript : MonoBehaviour
     public void SelfDestruct()
     {
         health--;
+        Debug.Log("hit!");
     }
 }

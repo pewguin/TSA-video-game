@@ -5781,7 +5781,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   transitionAnim: {fileID: 724367453}
-  targetPos: {x: 11, y: 77.25, z: 0}
+  targetPos: {x: 11, y: 77.38, z: 0}
   pulling: 0
   escapeWall: {fileID: 1092888672}
   pullForce: 3000
@@ -6372,7 +6372,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cameraTransform: {fileID: 2051175534}
-  parallaxMultiplier: {x: 0.97, y: 0.6}
+  parallaxMultiplier: {x: 0.87, y: 0.78}
 --- !u!212 &1345794846
 SpriteRenderer:
   m_ObjectHideFlags: 0
