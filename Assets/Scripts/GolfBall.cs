@@ -74,8 +74,9 @@ public class GolfBall : MonoBehaviour
         }
 
         // Adjust target angle according to input
-        targetAngle1 += Input.GetKey(KeyCode.D) ? 1 : Input.GetKey(KeyCode.A) ? -1 : 0 * Time.deltaTime * aimSpeed;
-        targetAngle2 += Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0 * Time.deltaTime * aimSpeed;
+        targetAngle1 += (Input.GetKey(KeyCode.D) ? 1 : Input.GetKey(KeyCode.A) ? -1 : 0) * Time.deltaTime * aimSpeed;
+       
+        targetAngle2 += (Input.GetKey(KeyCode.LeftArrow) ? -1 : Input.GetKey(KeyCode.RightArrow) ? 1 : 0) * Time.deltaTime * aimSpeed;
 
         // Charge the hit
         if (Input.GetKey(KeyCode.W) && !Input.GetKey(KeyCode.S))
